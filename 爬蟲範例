@@ -1,0 +1,28 @@
+pip install requests beautifulsoup4
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://csie.asia.edu.tw/zh_tw/TeacherIntroduction/Full_time_faculty"
+
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    teacher_sections = soup.find_all("ul", class_="i-member-profile-list")
+
+    for section in teacher_sections:
+        name_tag = section.find("span", class_="i-member-value member-data-value-name")
+        name = name_tag.get_text(strip=True) if name_tag else "無名氏"
+
+        research_tag = section.find("span", class_="i-member-value member-data-value-7")
+        research = research_tag.get_text(strip=True) if research_tag else "無資料"
+
+        print(f"教授姓名：{name}")
+        print(f"研究領域：{research}")
+        print("-" * 30)
+else:
+    print("無法連線至網站，請檢查網址或網路連線")
